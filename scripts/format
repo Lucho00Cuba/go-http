@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Format Go code
+echo "Formatting Go code..."
+go fmt ./...

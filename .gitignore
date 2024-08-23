@@ -1,0 +1,25 @@
+# Binaries
+dist/
+
+# Go build artifacts
+*.exe
+*.test
+*.out
+
+# Go modules
+go.sum
+
+# Dependency directories (add to .gitignore if you want to ignore the dependencies)
+vendor/
+
+# IDE/editor-specific files
+*.swp
+*.swo
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log

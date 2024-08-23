@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Get the directory of this script
+SCRIPT_DIR=$(dirname "$0")
+
+# Source the version script
+source "$SCRIPT_DIR/version"
+
+# Check if VERSION is defined
+if [ -z "$VERSION" ]; then
+    echo "VERSION is not defined. Exiting."
+    exit 1
+fi
+
+# Compile the Go project
+echo "Building the Go project..."
+go build -o dist/app -ldflags="-w -X github.com/lucho00cuba/go-http/version.VERSION=$VERSION" main.go

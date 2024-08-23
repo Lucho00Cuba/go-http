@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# Define a default version in case git is not available or not in a git repository
+DEFAULT_VERSION="v0.0.0"
+
+# Initialize VERSION variable
+VERSION=$DEFAULT_VERSION
+
+# Check if git is available
+if command -v git &> /dev/null; then
+    # Check if we are in a git repository
+    if git rev-parse --is-inside-work-tree &> /dev/null; then
+        # Check if there are uncommitted changes
+        DIRTY=""
+        if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+            DIRTY="-dirty"
+        fi
+
+        # Get the latest commit hash and tag
+        COMMIT=$(git rev-parse --short HEAD)
+        TAG=$(git tag -l --contains HEAD | head -n 1)
+
+        # Determine the version based on the tag or commit hash
+        if [[ -z "$DIRTY" && -n "$TAG" ]]; then
+            VERSION=$TAG
+        else
+            VERSION="${COMMIT}${DIRTY}"
+        fi
+    else
+        echo "Not in a git repository, using default version: $DEFAULT_VERSION"
+    fi
+else
+    echo "Git not found, using default version: $DEFAULT_VERSION"
+fi
+
+# Output the version
+echo "VERSION=$VERSION"

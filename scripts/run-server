@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+# Check if the root project .env file exists and source it
+if [ -f .env ]; then
+    echo "Loading environment variables from .env file..."
+    export $(grep -v '^#' .env | xargs)
+fi
+
+# Check if the Go executable exists, if not, build it
+if [ ! -f ./dist/app ]; then
+    echo "Executable not found. Building the Go application..."
+    $(dirname "$0")/build
+fi
+
+# Process additional arguments
+while [ "$#" -gt 0 ]; do
+    # Ensure we have an argument and its value
+    if [ "$#" -ge 2 ]; then
+        # Append the argument with a leading dash and its value
+        formatted_args="$formatted_args--$1 $2 "
+        shift 2
+    else
+        # Handle case where there's an argument without a value
+        formatted_args="$formatted_args$1 "
+        shift
+    fi
+done
+
+# Run the Go application with optional additional arguments
+echo "Running the Go application..."
+./dist/app $formatted_args server

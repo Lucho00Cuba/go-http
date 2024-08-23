@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Clean build artifacts
+echo "Cleaning build artifacts..."
+rm -fr dist/

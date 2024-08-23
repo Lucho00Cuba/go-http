@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Run Go tests with optional verbosity and coverage
+echo "Running Go tests..."
+
+# Check if GO_TEST_VERBOSE is set and use it, default to "true"
+GO_TEST_VERBOSE=${GO_TEST_VERBOSE:-"false"}
+
+# Set the verbosity flag for go test
+if [ "$GO_TEST_VERBOSE" = "true" ]; then
+    VERBOSE_FLAG="-v"
+else
+    VERBOSE_FLAG=""
+fi
+
+# Run the Go tests with coverage and verbosity
+go test -cover $VERBOSE_FLAG ./...
