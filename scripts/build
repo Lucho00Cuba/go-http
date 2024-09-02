@@ -3,6 +3,9 @@
 # Get the directory of this script
 SCRIPT_DIR=$(dirname "$0")
 
+CGO_ENABLED=${CGO_ENABLED:-0}
+PLATFORMS=("linux/amd64")
+
 # Source the version script
 source "$SCRIPT_DIR/version"
 
@@ -12,6 +15,23 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+# Clean and update dependencies
+echo "Tidying up Go modules..."
+go mod tidy
+
 # Compile the Go project
 echo "Building the Go project..."
-go build -o dist/app -ldflags="-w -X github.com/lucho00cuba/go-http/version.VERSION=$VERSION" main.go
+for platform in "${PLATFORMS[@]}"; do
+    platform_split=(${platform//\// })
+    GOOS=${platform_split[0]}
+	GOARCH=${platform_split[1]}
+    output_name=go-http'-'$GOOS'-'$GOARCH
+    echo "Building for $GOOS/$GOARCH..."
+    env CGO_ENABLED=$CGO_ENABLED GOOS=$GOOS GOARCH=$GOARCH go build -o dist/$output_name -ldflags="-s -w -X github.com/lucho00cuba/go-http/version.VERSION=$VERSION" -tags=containers main.go
+	if [ $? -ne 0 ]; then
+   		echo 'An error has occurred! Aborting the script execution...'
+		exit 1
+	fi
+done
+
+echo "Build completed successfully for all platforms."
